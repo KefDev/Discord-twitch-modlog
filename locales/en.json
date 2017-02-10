@@ -1,0 +1,113 @@
+{
+    "words": {
+        "user": "User",
+        "moderator": "Moderator",
+        "reason": "Reason",
+        "duration": "Duration",
+        "date": "Date",
+        "null": "Undefined",
+        "permanent": "Permanent",
+        "unknown": "Unknown",
+        "type": "Type",
+        "details": "Details",
+        "error": "Error",
+        "success": "Success",
+        "prefix": "Prefix",
+        "channel": "Channel"
+    },
+    "sentences": {
+        "enter_reason": "Please responsible moderator do : ",
+        "error": "An error occured",
+        "success": "Command executed successfully",
+        "nowlog": "I will now log {0}s in {1}",
+        "stoplog": "I'll stop logging {0}s",
+        "newprefix": "The new prefix is : `{0}`",
+        "newlanguage": "Messages will now be in : `{0}`",
+        "newtwitch": "Now watching events on channel : `{0}`",
+        "stats": "Here are some statistics about your server.",
+        "pls": "Please do : "
+    },
+    "errors": {
+        "noDM": {
+            "message": "Received command in DM.",
+            "reason": "None of the commands of the bot are available in DM."
+        },
+        "unknownGuild": {
+            "message": "Guild is not in the database. The bot is now leaving the guild invite it back if you still want it.",
+            "reason": "An error happened while joining your guild."
+        },
+        "invalidArgument": {
+            "message": "Invalid argument found.",
+            "reason": "`{0}` is not a valid argument, please refer to the usage of the command for further informations."
+        },
+        "noAdmin": {
+            "message": "You don't have the necessary permissions to perform this action.",
+            "reason": "You need to have the manageGuild permission to do this."
+        },
+        "longPrefix": {
+            "message": "Invalid prefix.",
+            "reason": "The prefix has to be less than 17 characters long and cannot be an emoji. It's recommended to choose something short as an exclamation point for example."
+        },
+        "unknownLang": {
+            "message": "Unknown language.",
+            "reason": "Choose one from that list : {0}"
+        },
+        "twitchTaken": {
+            "message": "Channel already in database.",
+            "reason": "Support for multi server is not out yet, if your channel `{0}` isn't available to you please contact me here https://discord.gg/8mXj3TD with some proofs that it's your channel and I will fix that."
+        }
+    },
+    "success": {
+        "newtwitch": {
+            "message": "The channel connected to this server is now : `{0}`.\nTimeouts will be logged {1}\nBans will be logged {2}"
+        },
+        "newlanguage": {
+            "message": "Every message from the bot will now be in : `{0}`.\nList of available languages : {1}"
+        },
+        "newprefix": {
+            "message": "The bot's new prefix is : `{0}`. If the bot isn't working anymore because your prefix is not recognized please kick it and invite it back again."
+        },
+        "stoplog": {
+            "message": "I won't log `{0}s` anymore."
+        },
+        "nowlog": {
+            "message": "I will now log {0}s in {1}"
+        }
+    },
+    "commands": {
+        "content": "\n",
+        "embed": {
+            "description": "Here is the list of commands assuming the prefix is `?` :",
+            "color": "6605055",
+            "fields": [{
+                "name": "?help",
+                "value": "Description :\nSends you the list of commmands.\n\nUsage :\n- ?help",
+                "inline": false
+            }, {
+                "name": "?lang",
+                "value": "Description :\nChanges the language of the bot\n\nUsage : \n- ?lang English\n- ?lang en\nActual list of languages : Français | English",
+                "inline": false
+            }, {
+                "name": "?log",
+                "value": "Description :\nChanges the channel where the events are logged\n\nUsage :\n- ?log timeout off\n- ?log timeout here\n- ?log timeout #channel\n`timeout` and `ban` can be replace by each other.",
+                "inline": false
+            }, {
+                "name": "?prefix",
+                "value": "Description :\nChanges the prefix of the bot\n\nUsage :\n- ?prefix something",
+                "inline": false
+            }, {
+                "name": "?reason",
+                "value": "Description :\nChanges the reason of the ban and the responsible moderator\n\nUsage :\n- ?reason id whatever\n- ?reason last whatever\nYou can replace `last` by `latest` or `|`",
+                "inline": false
+            }, {
+                "name": "?twitch",
+                "value": "Description :\nChanges the twitch channel that the bot is watching\n\nUsage :\n- ?twitch channel",
+                "inline": false
+            }, {
+                "name": "For more help",
+                "value": "Join this server : https://discord.gg/pAU6qKx",
+                "inline": false
+            }]
+        }
+    }
+}

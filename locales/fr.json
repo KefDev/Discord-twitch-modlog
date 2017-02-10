@@ -1,0 +1,113 @@
+{
+    "words": {
+        "user": "Utilisateur",
+        "moderator": "Modérateur",
+        "reason": "Raison",
+        "duration": "Durée",
+        "date": "Date",
+        "null": "Indéfini(e)",
+        "permanent": "Permanent(e)",
+        "unknown": "Inconnu(e)",
+        "type": "Type",
+        "details": "Détails",
+        "error": "Erreur",
+        "success": "Succès",
+        "prefix": "Préfixe",
+        "channel": "Chaîne"
+    },
+    "sentences": {
+        "enter_reason": "Modérateur responsable, faites : ",
+        "error": "Une erreur est survenue.",
+        "success": "Commande éxecutée sans problèmes.",
+        "nowlog": "Je vais maintenant envoyer les {0}s dans {1}.",
+        "stoplog": "Je vais arrêter d'envoyer les {0}s.",
+        "newprefix": "Le nouveau préfixe de commande est : `{0}`.",
+        "newlanguage": "Les messages seront maintenant en : `{0}`.",
+        "newtwitch": "Je surveille maintenant les évènements sur la chaîne : `{0}`",
+        "stats": "Voici quelques statistiques par rapport à votre serveur.",
+        "pls": "S'il vous plaît faites : "
+    },
+    "errors": {
+        "noDM": {
+            "message": "Commande reçue en message privé.",
+            "reason": "Aucune des commandes n'est disponible en messages privés."
+        },
+        "unknownGuild": {
+            "message": "Serveur absent dans la base de données. Le bot va maintenant quitter le serveur, réinviter le si vous le voulez toujours.",
+            "reason": "Une erreur s'est produite lors de l'arrivée du bot."
+        },
+        "invalidArgument": {
+            "message": "Argument invalide trouvé.",
+            "reason": "`{0}` n'est pas un argument valide. Merci de vous référer au mode d'emploi de la commande pour plus d'informations."
+        },
+        "noAdmin": {
+            "message": "Vous n'avez pas les permissions nécessaires pour effectuer cette action.",
+            "reason": "Il vous faut la permission de gérer le serveur."
+        },
+        "longPrefix": {
+            "message": "Préfixe invalide.",
+            "reason": "Le préfixe ne doit pas faire plus de 17 caractères ni être un émoji. Il est recommandé de choisir un préfixe court comme un point d'exclamation par exemple."
+        },
+        "unknownLang": {
+            "message": "Langage inconnu.",
+            "reason": "Choississez un langage parmis cette liste : {0}"
+        },
+        "twitchTaken": {
+            "message": "Chaine déjà dans la base de données.",
+            "reason": "Le support pour serveur multiple n'est toujours pas disponible. Si votre chaîne `{0}` est déjà connectée à un autre serveur qui n'est pas le votre merci de me contacter ici https://discord.gg/8mXj3TD avec des preuves que c'est bien votre chaîne et je règlerais ce soucis."
+        }
+    },
+    "success": {
+        "newtwitch": {
+            "message": "La chaîne twitch reliée à ce serveur est maintenant : `{0}`.\nLes timeouts seront envoyés {1}\nLes bans seront envoyés {2}"
+        },
+        "newlanguage": {
+            "message": "Tous les messages du bot seront maintenant : `{0}`.\nListe des langages disponibles : {1}"
+        },
+        "newprefix": {
+            "message": "Le nouveau préfixe du bot est : `{0}`. Si le bot ne reconnaît plus vos commandes kickez le puis réinvitez le."
+        },
+        "stoplog": {
+            "message": "Je ne vais plus enregister les `{0}s` à partir de maintenant."
+        },
+        "nowlog": {
+            "message": "Je vais maintenant envoyer les {0}s dans {1}."
+        }
+    },
+    "commands": {
+        "content": "\n",
+        "embed": {
+            "description": "Voici la liste de commande en partant du principe que le préfixe est `?` :",
+            "color": "6605055",
+            "fields": [{
+                "name": "?help",
+                "value": "Description :\nVous donne la liste des commandes.\n\nUsage :\n- ?help",
+                "inline": false
+            }, {
+                "name": "?lang",
+                "value": "Description :\nChange la langue du bot\n\nUsage : \n- ?lang English\n- ?lang en\nListes actuelles des langues disponibles : Français | English",
+                "inline": false
+            }, {
+                "name": "?log",
+                "value": "Description :\nChange le salon textuel où l'évènement choisi est envoyé\n\nUsage :\n- ?log timeout off\n- ?log timeout here\n- ?log timeout #channel\n`timeout` peut être remplacé par `ban` et inversement.",
+                "inline": false
+            }, {
+                "name": "?prefix",
+                "value": "Description :\nChange le préfixe du bot\n\nUsage :\n- ?prefix quelquechose",
+                "inline": false
+            }, {
+                "name": "?reason",
+                "value": "Description :\nChange le raison du ban et définit le modérateur responsable.\n\nUsage :\n- ?reason id raison\n- ?reason last raison\nIl est possible de rmeplacer `last` par `latest` ou `|`",
+                "inline": false
+            }, {
+                "name": "?twitch",
+                "value": "Description :\nChange la chaîne twitch que le bot surveille.\n\nUsage :\n- ?twitch chaîne",
+                "inline": false
+            }, {
+                "name": "Pour plus d'aide",
+                "value": "Rejoignez le serveur : https://discord.gg/pAU6qKx",
+                "inline": false
+            }]
+        }
+    }
+}
