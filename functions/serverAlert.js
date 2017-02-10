@@ -31,7 +31,7 @@ module.exports = function(Client, guild, action, bots, admins) {
         }
     };
 
-    if (admins != null) {
+    if (admins != null && !Client.config.ignoredGuilds.includes(guild.id)) {
         for (let i = 0; i < admins.length; i++) {
             Client.functions.privateMessage(Client, admins[i], embed);
         }

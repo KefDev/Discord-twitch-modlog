@@ -13,6 +13,7 @@ const mysql = require("mysql"),
 const Client = {
     config: require("./config.json"),
     channels: [],
+    ignoredGuilds: require("./config.json").ignoredGuilds,
 
     db: mysql.createConnection({
         host: require("./config.json").mysqlhost,
@@ -78,15 +79,10 @@ Client.discord.connect().then(() => {
 
 
 Client.discord.on("messageCreate", m => {
-    if (m.channel.guild != null && !m.author.bot) {
+    if (m.channel.guild != null && !m.author.bot && ) {
         Client.db.query("SELECT * FROM global WHERE discordID = ?", [m.channel.guild.id], (error, results) => {
             if (error) console.log(error);
-            else if (results[0] == null) {
-                Client.functions.sendEmbed("unknownGuild", false, "en", "error", [null, null, null], Client, m);
-                setTimeout(() => {
-                    m.channel.guild.leave();
-                }, 1000);
-            } else {
+            else if (results[0] != null) {
                 let server = results[0],
                     command = m.content.split(" ")[0].toLowerCase().substring(server.prefix.length, m.content.split(" ")[0].length);
 
@@ -95,7 +91,7 @@ Client.discord.on("messageCreate", m => {
                 if (m.mentions[0] != null) {
                     if (m.mentions[0].id == Client.discord.user.id) Client.functions.getInfo(Client, m, server);
                 }
-            }
+            } else return;
         });
     } //else Client.functions.sendEmbed("noDM", true, "en", "error", [null, null, null], Client, m);
 });
