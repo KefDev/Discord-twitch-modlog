@@ -79,7 +79,7 @@ Client.discord.connect().then(() => {
 
 
 Client.discord.on("messageCreate", m => {
-    if (m.channel.guild != null && !m.author.bot && ) {
+    if (m.channel.guild != null && !m.author.bot) {
         Client.db.query("SELECT * FROM global WHERE discordID = ?", [m.channel.guild.id], (error, results) => {
             if (error) console.log(error);
             else if (results[0] != null) {
