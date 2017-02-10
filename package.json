@@ -13,6 +13,10 @@
     "scripts": {
         "run": "node main.js"
     },
+    "repository": {
+        "type": "git",
+        "url": "ssh://git@github.com:Equinoxbig/Discord-twitch-modlog.git"
+    },
     "author": "Equinoxbig",
     "license": "MIT"
 }
