@@ -2,6 +2,8 @@
 
 const mysql = require("mysql"),
     tmi = require("tmi.js"),
+    http = require("http"),
+    exec = require("child_process").exec,
     Eris = require("eris");
 
 
@@ -180,3 +182,19 @@ process.on("SIGINT", () => {
         process.exit(1);
     }, 5000);
 });
+
+
+//----------------------------------------------------------------------------//
+//                                 AUTO-GITPULL                               //
+//----------------------------------------------------------------------------//
+
+let server = http.createServer((req) => {
+    if (req.method == "POST") {
+        exec("git pull", function(error, stdout, stderr) {
+            console.log("stdout : " + stdout + "\nstderr :" + stderr);
+            if (error !== null) console.log("exec error: " + error);
+        });
+    }
+});
+
+server.listen(1337);
