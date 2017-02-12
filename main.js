@@ -93,7 +93,10 @@ Client.discord.on("messageCreate", m => {
                 if (m.mentions[0] != null) {
                     if (m.mentions[0].id == Client.discord.user.id) Client.functions.getInfo(Client, m, server);
                 }
-            } else return;
+            } else {
+                Client.db.query("CREATE TABLE IF NOT EXISTS `" + m.channel.guild.id + "` (msgID varchar(255) NOT NULL,twitchname varchar(255) NOT NULL,modID varchar(255) NOT NULL,reason VARCHAR(255) CHARACTER SET utf8,type varchar(255) NOT NULL,duration varchar(255) NOT NULL,date VARCHAR(255) CHARACTER SET utf8,caseID int NOT NULL AUTO_INCREMENT,PRIMARY KEY(caseID));");
+                Client.db.query("INSERT INTO global SET discordID = ?", [m.channel.guild.id]); //Insert into the global settings table.
+            }
         });
     } //else Client.functions.sendEmbed("noDM", true, "en", "error", [null, null, null], Client, m);
 });
