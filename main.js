@@ -122,11 +122,13 @@ Client.twitch.on("timeout", (channel, username, reason, duration) => {
 Client.discord.on("guildCreate", guild => {
     Client.functions.checkServer(guild)
         .then(data => {
+            console.log(data);
             Client.db.query("CREATE TABLE IF NOT EXISTS `" + guild.id + "` (msgID varchar(255) NOT NULL,twitchname varchar(255) NOT NULL,modID varchar(255) NOT NULL,reason VARCHAR(255) CHARACTER SET utf8,type varchar(255) NOT NULL,duration varchar(255) NOT NULL,date VARCHAR(255) CHARACTER SET utf8,caseID int NOT NULL AUTO_INCREMENT,PRIMARY KEY(caseID));");
             Client.db.query("INSERT INTO global SET discordID = ?", [guild.id]); //Insert into the global settings table.
             Client.functions.serverAlert(Client, guild, "joined", data.bots, data.admins);
         })
         .catch(data => {
+            console.log(data);
             guild.leave();
             Client.functions.serverAlert(Client, guild, "denied", data.bots, null);
         });

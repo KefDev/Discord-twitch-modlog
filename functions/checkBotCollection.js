@@ -10,14 +10,12 @@ module.exports = function(guild) {
             counted += 1;
             if (member.bot == true) bots += 1;
             if (member.permission.has("manageGuild") == true) admins.push(member.id);
-            if (counted == guild.memberCount && bots > guild.memberCount / 2) reject({
+            let object = {
                 bots: bots,
                 admins: admins
-            });
-            else if (counted == guild.memberCount && bots < guild.memberCount / 2) resolve({
-                bots: bots,
-                admins: admins
-            });
+            };
+            if (counted == guild.memberCount && bots > guild.memberCount / 2) reject(object);
+            else if (counted == guild.memberCount && bots < guild.memberCount / 2) resolve(object);
         });
     });
     return promise;
