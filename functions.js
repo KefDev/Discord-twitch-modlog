@@ -6,5 +6,6 @@ module.exports = {
     sendEmbed: require("./functions/sendEmbed.js"),
     modifyLog: require("./functions/modifyLog.js"),
     connectChannels: require("./functions/connectChannels.js"),
-    getInfo: require("./functions/getInfo.js")
+    getInfo: require("./functions/getInfo.js"),
+    postStats: require("./functions/postStats.js")
 };

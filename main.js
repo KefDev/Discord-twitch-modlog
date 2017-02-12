@@ -51,6 +51,8 @@ const Client = {
 
     functions: require("./functions.js"),
     lang: require("./locales.js"),
+
+    request: require("request"),
     fs: require("fs")
 };
 
@@ -123,6 +125,7 @@ Client.twitch.on("timeout", (channel, username, reason, duration) => {
 
 
 Client.discord.on("guildCreate", guild => {
+    Client.functions.postStats(Client);
     Client.functions.checkServer(guild)
         .then(data => {
             console.log(data);
@@ -139,6 +142,7 @@ Client.discord.on("guildCreate", guild => {
 
 
 Client.discord.on("guildDelete", guild => {
+    Client.functions.postStats(Client);
     Client.db.query("SELECT * FROM global WHERE discordID = ?", [guild.id], (error, results) => {
         if (error) console.log(error);
         else if (results[0] == null) return;
