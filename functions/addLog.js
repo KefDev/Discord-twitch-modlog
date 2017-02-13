@@ -55,11 +55,11 @@ module.exports = function(channel, username, reason, duration, type, Client) {
                                         }, {
                                             "name": Client.lang[server.language].words.duration + " :",
                                             "value": duration,
-                                            "inline": false
+                                            "inline": true
                                         }, {
                                             "name": Client.lang[server.language].words.date + " :",
                                             "value": date,
-                                            "inline": false
+                                            "inline": true
                                         }]
                                     }
                                 }).then(message => {

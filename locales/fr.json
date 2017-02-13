@@ -25,7 +25,8 @@
         "newlanguage": "Les messages seront maintenant en : `{0}`.",
         "newtwitch": "Je surveille maintenant les évènements sur la chaîne : `{0}`",
         "stats": "Voici quelques statistiques par rapport à votre serveur.",
-        "pls": "S'il vous plaît faites : "
+        "pls": "S'il vous plaît faites : ",
+        "actions": "Nombre de sanctions"
     },
     "errors": {
         "noDM": {

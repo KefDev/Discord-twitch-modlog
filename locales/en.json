@@ -13,7 +13,7 @@
         "error": "Error",
         "success": "Success",
         "prefix": "Prefix",
-        "channel": "Channel"
+        "channel": "Channel",
     },
     "sentences": {
         "enter_reason": "Please responsible moderator do : ",
@@ -25,7 +25,8 @@
         "newlanguage": "Messages will now be in : `{0}`",
         "newtwitch": "Now watching events on channel : `{0}`",
         "stats": "Here are some statistics about your server.",
-        "pls": "Please do : "
+        "pls": "Please do : ",
+        "actions": "Number of actions taken"
     },
     "errors": {
         "noDM": {
