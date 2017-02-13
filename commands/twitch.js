@@ -8,8 +8,10 @@ module.exports = {
                     else if (results[0] != null) Client.functions.sendEmbed("twitchTaken", false, server.language, "error", [m.content.split(" ")[1].toLowerCase(), null, null], Client, m);
                     else {
                         if (server.twitchChannel.startsWith("#")) Client.twitch.part(server.twitchChannel);
-                        if (m.content.split(" ")[1].toLowerCase() == "disconnect") Client.functions.sendEmbed("leftchannel", false, server.language, "success", [null, null, null], Client, m);
-                        else {
+                        if (m.content.split(" ")[1].toLowerCase() == "disconnect") {
+                            Client.functions.sendEmbed("leftchannel", false, server.language, "success", [null, null, null], Client, m);
+                            Client.db.query("UPDATE global SET twitchChannel = ? WHERE discordID = ?", [".", m.channel.guild.id]);
+                        } else {
                             Client.db.query("UPDATE global SET twitchChannel = ? WHERE discordID = ?", ["#" + m.content.split(" ")[1].toLowerCase(), m.channel.guild.id]);
                             Client.twitch.join("#" + m.content.split(" ")[1].toLowerCase());
 
