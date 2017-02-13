@@ -118,10 +118,6 @@ Client.twitch.on("timeout", (channel, username, reason, duration) => {
     Client.functions.addLog(channel, username, reason, duration, "timeout", Client);
 });
 
-Client.twitch.on("notice", (channel, msgid, message) => {
-    console.log(channel + " " + msgid + " " + message);
-});
-
 
 //----------------------------------------------------------------------------//
 //              Creating table when the bot is added or removed               //
