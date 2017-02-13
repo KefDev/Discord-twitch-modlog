@@ -3,7 +3,7 @@ module.exports = {
         m.delete();
         console.log("Tracking user : " + m.content.split(" ")[1]);
         if (m.content.split(" ")[1] != null) {
-            Client.functions.trackUser(Client, m.content.split(" ")[1].toLowerCase).then(data => {
+            Client.functions.trackUser(Client, m.content.split(" ")[1].toLowerCase()).then(data => {
                 console.log(data);
                 Client.functions.sendEmbed("twitchIdFound", true, server.language, "success", [m.content.split(" ")[1].toLowerCase(), data.users[0]._id], Client, m);
             }).catch(response => {
