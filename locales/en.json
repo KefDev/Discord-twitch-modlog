@@ -13,7 +13,7 @@
         "error": "Error",
         "success": "Success",
         "prefix": "Prefix",
-        "channel": "Channel",
+        "channel": "Channel"
     },
     "sentences": {
         "enter_reason": "Please responsible moderator do : ",
