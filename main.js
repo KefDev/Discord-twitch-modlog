@@ -119,7 +119,7 @@ Client.twitch.on("timeout", (channel, username, reason, duration) => {
 });
 
 Client.twitch.on("notice", (channel, msgid, message) => {
-    if (msgid == "unban_success") console.log(message);
+    console.log(channel + " " + msgid + " " + message);
 });
 
 
