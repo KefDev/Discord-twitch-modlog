@@ -26,44 +26,51 @@ module.exports = function(channel, username, reason, duration, type, Client) {
                         .then(data => {
                             username = username + " (" + data.users[0]._id + ")";
                             if (server[type + "Channel"] != ".") {
-                                Client.discord.createMessage(server[type + "Channel"], {
-                                    content: "\n",
-                                    embed: {
-                                        color: Client.config.colors[type],
-                                        timestamp: new Date(),
+                                Client.db.query("SELECT COUNT(*) AS numberActions FROM `" + server.discordID + "` WHERE twitchid = ?", [data.users[0]._id], (error, results) => {
+                                    let actions = results[0].numberActions || 1;
+                                    Client.discord.createMessage(server[type + "Channel"], {
+                                        content: "\n",
+                                        embed: {
+                                            color: Client.config.colors[type],
+                                            timestamp: new Date(),
 
-                                        fields: [{
-                                            "name": "ID :",
-                                            "value": caseID,
-                                            "inline": true
-                                        }, {
-                                            "name": Client.lang[server.language].words.type + " :",
-                                            "value": beautifytype,
-                                            "inline": true
-                                        }, {
-                                            "name": Client.lang[server.language].words.user + " :",
-                                            "value": username,
-                                            "inline": false
-                                        }, {
-                                            "name": Client.lang[server.language].words.moderator + " :",
-                                            "value": mod,
-                                            "inline": false
-                                        }, {
-                                            "name": Client.lang[server.language].words.reason + " :",
-                                            "value": reason,
-                                            "inline": false
-                                        }, {
-                                            "name": Client.lang[server.language].words.duration + " :",
-                                            "value": duration,
-                                            "inline": true
-                                        }, {
-                                            "name": Client.lang[server.language].words.date + " :",
-                                            "value": date,
-                                            "inline": true
-                                        }]
-                                    }
-                                }).then(message => {
-                                    Client.db.query("INSERT INTO `" + server.discordID + "` SET msgID = ?, twitchname = ?, modID = ?, reason = ?, type = ?, duration = ?, date = ?", [message.id, username, mod, reason, type, duration, date]); //ID auto-increments itself
+                                            fields: [{
+                                                "name": "ID :",
+                                                "value": caseID,
+                                                "inline": true
+                                            }, {
+                                                "name": Client.lang[server.language].words.type + " :",
+                                                "value": beautifytype,
+                                                "inline": true
+                                            }, {
+                                                "name": Client.lang[server.language].words.user + " :",
+                                                "value": username,
+                                                "inline": true
+                                            }, {
+                                                "name": Client.lang[server.language].sentences.actions + " :",
+                                                "value": actions,
+                                                "inline": true
+                                            }, {
+                                                "name": Client.lang[server.language].words.moderator + " :",
+                                                "value": mod,
+                                                "inline": false
+                                            }, {
+                                                "name": Client.lang[server.language].words.reason + " :",
+                                                "value": reason,
+                                                "inline": false
+                                            }, {
+                                                "name": Client.lang[server.language].words.duration + " :",
+                                                "value": duration,
+                                                "inline": true
+                                            }, {
+                                                "name": Client.lang[server.language].words.date + " :",
+                                                "value": date,
+                                                "inline": true
+                                            }]
+                                        }
+                                    }).then(message => {
+                                        Client.db.query("INSERT INTO `" + server.discordID + "` SET msgID = ?, twitchname = ?, twitchid = ?, modID = ?, reason = ?, type = ?, duration = ?, date = ?", [message.id, username, data.users[0]._id, mod, reason, type, duration, date]); //ID auto-increments itself
+                                    });
                                 });
                             }
                         })
