@@ -12,11 +12,8 @@ module.exports = function(Client, m) {
                     Client.db.query("SELECT * FROM `" + server.discordID + "` WHERE caseID = ?", [id], (error, results) => {
                         Client.db.query("UPDATE `" + server.discordID + "` SET msgID = ?, twitchname = ?, modID =?, reason =?, type =?, duration =? WHERE caseID = ?", [results[0].msgID, results[0].twitchname, m.author.id, reason, results[0].type, results[0].duration, id]);
                         let user = results[0];
-                        Client.functions.trackUser(Client, user.twitchname)
+                        Client.functions.trackUser(Client, user.twitchname.split(" ")[0])
                             .then(data => {
-                                console.log(user);
-                                user.twitchname = user.twichname + " (" + data.users[0]._id + ")";
-
                                 Client.db.query("SELECT COUNT(*) AS numberActions FROM `" + server.discordID + "` WHERE twitchid = ?", [data.users[0]._id], (error, results) => {
                                     let actions = results[0].numberActions || 1;
 
