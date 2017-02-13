@@ -72,6 +72,9 @@
         },
         "nowlog": {
             "message": "I will now log {0}s in {1}"
+        },
+        "leftchannel": {
+            "message": "This server is now disconnected from twitch."
         }
     },
     "commands": {
@@ -101,7 +104,7 @@
                 "inline": false
             }, {
                 "name": "?twitch",
-                "value": "Description :\nChanges the twitch channel that the bot is watching\n\nUsage :\n- ?twitch channel",
+                "value": "Description :\nChanges the twitch channel that the bot is watching\n\nUsage :\n- ?twitch channel\n- ?twitch disconnect",
                 "inline": false
             }, {
                 "name": "For more help",

@@ -72,6 +72,9 @@
         },
         "nowlog": {
             "message": "Je vais maintenant envoyer les {0}s dans {1}."
+        },
+        "leftchannel": {
+            "message": "Ce serveur n'est maintenant plus connecté à aucune chaîne twitch."
         }
     },
     "commands": {
@@ -101,7 +104,7 @@
                 "inline": false
             }, {
                 "name": "?twitch",
-                "value": "Description :\nChange la chaîne twitch que le bot surveille.\n\nUsage :\n- ?twitch chaîne",
+                "value": "Description :\nChange la chaîne twitch que le bot surveille.\n\nUsage :\n- ?twitch chaîne\n- ?twitch disconnect",
                 "inline": false
             }, {
                 "name": "Pour plus d'aide",
