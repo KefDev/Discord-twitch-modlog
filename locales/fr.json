@@ -55,6 +55,10 @@
         "twitchTaken": {
             "message": "Chaine déjà dans la base de données.",
             "reason": "Le support pour serveur multiple n'est toujours pas disponible. Si votre chaîne `{0}` est déjà connectée à un autre serveur qui n'est pas le votre merci de me contacter ici https://discord.gg/8mXj3TD avec des preuves que c'est bien votre chaîne et je règlerais ce soucis."
+        },
+        "twitchIdNotFound": {
+            "message": "ID Twitch introuvable",
+            "reason": "{0}\n{1}\n{2}"
         }
     },
     "success": {
@@ -75,6 +79,9 @@
         },
         "leftchannel": {
             "message": "Ce serveur n'est maintenant plus connecté à aucune chaîne twitch."
+        },
+        "twitchIdFound": {
+            "message": "L'id twitch du pseudonyme {0} est : `{1}`"
         }
     },
     "commands": {
@@ -105,6 +112,10 @@
             }, {
                 "name": "?twitch",
                 "value": "Description :\nChange la chaîne twitch que le bot surveille.\n\nUsage :\n- ?twitch chaîne\n- ?twitch disconnect",
+                "inline": false
+            }, {
+                "name": "?track",
+                "value": "Description :\nTrouve l'id du compte twitch de la personne.\n\nUsage :\n- ?track nom",
                 "inline": false
             }, {
                 "name": "Pour plus d'aide",

@@ -55,6 +55,10 @@
         "twitchTaken": {
             "message": "Channel already in database.",
             "reason": "Support for multi server is not out yet, if your channel `{0}` isn't available to you please contact me here https://discord.gg/8mXj3TD with some proofs that it's your channel and I will fix that."
+        },
+        "twitchIdNotFound": {
+            "message": "Couldn't find twitch ID",
+            "reason": "{0}\n{1}\n{2}"
         }
     },
     "success": {
@@ -75,6 +79,9 @@
         },
         "leftchannel": {
             "message": "This server is now disconnected from twitch."
+        },
+        "twitchIdFound": {
+            "message": "The twitch id of {0} is : `{1}`"
         }
     },
     "commands": {
@@ -105,6 +112,10 @@
             }, {
                 "name": "?twitch",
                 "value": "Description :\nChanges the twitch channel that the bot is watching\n\nUsage :\n- ?twitch channel\n- ?twitch disconnect",
+                "inline": false
+            }, {
+                "name": "?track",
+                "value": "Description :\nFinds the twitch id of someone.\n\nUsage :\n- ?track twitchname",
                 "inline": false
             }, {
                 "name": "For more help",
