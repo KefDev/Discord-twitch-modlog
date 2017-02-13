@@ -7,5 +7,6 @@ module.exports = {
     modifyLog: require("./functions/modifyLog.js"),
     connectChannels: require("./functions/connectChannels.js"),
     getInfo: require("./functions/getInfo.js"),
+    trackUser: require("./functions/trackUser.js"),
     postStats: require("./functions/postStats.js")
 };
