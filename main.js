@@ -118,6 +118,10 @@ Client.twitch.on("timeout", (channel, username, reason, duration) => {
     Client.functions.addLog(channel, username, reason, duration, "timeout", Client);
 });
 
+Client.twitch.on("notice", (channel, msgid, message) => {
+    if (msgid == "unban_success") console.log(message);
+});
+
 
 //----------------------------------------------------------------------------//
 //              Creating table when the bot is added or removed               //
