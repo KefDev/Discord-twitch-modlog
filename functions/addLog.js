@@ -45,7 +45,7 @@ module.exports = function(channel, username, reason, duration, type, Client) {
                                             }, {
                                                 "name": Client.lang[server.language].words.user + " :",
                                                 "value": username,
-                                                "inline": true
+                                                "inline": false
                                             }, {
                                                 "name": Client.lang[server.language].sentences.actions + " :",
                                                 "value": actions,

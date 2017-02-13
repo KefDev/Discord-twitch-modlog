@@ -14,6 +14,7 @@ module.exports = function(Client, m) {
                         let user = results[0];
                         Client.functions.trackUser(Client, user.twitchname)
                             .then(data => {
+                                console.log(user);
                                 user.twitchname = user.twichname + " (" + data.users[0]._id + ")";
 
                                 Client.db.query("SELECT COUNT(*) AS numberActions FROM `" + server.discordID + "` WHERE twitchid = ?", [data.users[0]._id], (error, results) => {
