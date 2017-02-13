@@ -8,11 +8,15 @@ module.exports = {
                     else if (results[0] != null) Client.functions.sendEmbed("twitchTaken", false, server.language, "error", [m.content.split(" ")[1].toLowerCase(), null, null], Client, m);
                     else {
                         if (server.twitchChannel.startsWith("#")) Client.twitch.part(server.twitchChannel);
-                        if (m.content.split(" ")[2] == "disconnect") Client.functions.sendEmbed("leftchannel", false, server.language, "success", [null, null, null], Client, m);
+                        if (m.content.split(" ")[1].toLowerCase() == "disconnect") Client.functions.sendEmbed("leftchannel", false, server.language, "success", [null, null, null], Client, m);
                         else {
                             Client.db.query("UPDATE global SET twitchChannel = ? WHERE discordID = ?", ["#" + m.content.split(" ")[1].toLowerCase(), m.channel.guild.id]);
                             Client.twitch.join("#" + m.content.split(" ")[1].toLowerCase());
-                            Client.functions.sendEmbed("newtwitch", false, server.language, "success", [m.content.split(" ")[1].toLowerCase(), null, null], Client, m);
+
+                            server.banChannel == "." ? server.banChannel = "nowhere" : server.banChannel = "<#" + server.banChannel + ">";
+                            server.timeoutChannel == "." ? server.timeoutChannel = "nowhere" : server.timeoutChannel = "<#" + server.timeoutChannel + ">";
+
+                            Client.functions.sendEmbed("newtwitch", false, server.language, "success", [m.content.split(" ")[1].toLowerCase(), server.timeoutChannel, server.banChannel], Client, m);
                         }
                     }
                 });
