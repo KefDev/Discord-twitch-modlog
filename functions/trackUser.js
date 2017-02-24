@@ -2,7 +2,7 @@ module.exports = function(Client, user) {
 
     let promise = new Promise((resolve, reject) => {
         let options = {
-            url: "https://api.twitch.tv/v5/users?login=" + user,
+            url: "https://api.twitch.tv/kraken/users/" + user,
             method: "GET",
             headers: {
                 "Client-ID": Client.config.twitchAPI
