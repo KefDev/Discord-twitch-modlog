@@ -82,7 +82,7 @@
             "message": "This server is now disconnected from twitch."
         },
         "twitchIdFound": {
-            "message": "The twitch id of {0} is : `{1}`"
+            "message": "The twitch id of {0} is : `{1}`. Here is the list of usernames used by this person : \n{2}"
         }
     },
     "commands": {
