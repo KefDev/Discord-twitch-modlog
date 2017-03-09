@@ -90,7 +90,7 @@ Client.discord.on("messageCreate", m => {
                 let server = results[0],
                     command = m.content.split(" ")[0].toLowerCase().substring(server.prefix.length, m.content.split(" ")[0].length);
 
-                if (["eval", "reason", "log", "prefix", "lang", "twitch", "help", "track"].includes(command) && m.content.toLowerCase().startsWith(server.prefix)) require(`./commands/${command}.js`).exec(Client, m, server);
+                if (["eval", "reason", "log", "prefix", "lang", "twitch", "help", "track", "names"].includes(command) && m.content.toLowerCase().startsWith(server.prefix)) require(`./commands/${command}.js`).exec(Client, m, server);
 
                 if (m.mentions[0] != null) {
                     if (m.mentions[0].id == Client.discord.user.id) Client.functions.getInfo(Client, m, server);

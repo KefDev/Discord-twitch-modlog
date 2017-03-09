@@ -60,6 +60,10 @@
         "twitchIdNotFound": {
             "message": "Couldn't find twitch ID",
             "reason": "{0}\n{1}\n{2}"
+        },
+        "namesNotFound": {
+            "message": "Can't find older names",
+            "reason": "There are no informations about the usernames that this user has used"
         }
     },
     "success": {
@@ -83,6 +87,9 @@
         },
         "twitchIdFound": {
             "message": "The twitch id of {0} is : `{1}`"
+        },
+        "namesFound": {
+            "message": "The previous name of {0} are : \n```{1}```"
         }
     },
     "commands": {
@@ -117,6 +124,10 @@
             }, {
                 "name": "?track",
                 "value": "Description :\nFinds the twitch id of someone.\n\nUsage :\n- ?track twitchname",
+                "inline": false
+            }, {
+                "name": "?names",
+                "value": "Description :\nGives you the names that this person has already used.\n\nUsage :\n- ?names actualname",
                 "inline": false
             }, {
                 "name": "For more help",

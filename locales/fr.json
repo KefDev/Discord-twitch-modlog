@@ -60,6 +60,10 @@
         "twitchIdNotFound": {
             "message": "ID Twitch introuvable",
             "reason": "{0}\n{1}\n{2}"
+        },
+        "namesNotFound": {
+            "message": "Noms introuvables.",
+            "reason": "Aucune information n'est disponible à propos des noms de cet utilisateur."
         }
     },
     "success": {
@@ -83,6 +87,9 @@
         },
         "twitchIdFound": {
             "message": "L'id twitch du pseudonyme {0} est : `{1}`"
+        },
+        "namesFound": {
+            "message": "Les précédents noms de {0} sont : \n```{1}```"
         }
     },
     "commands": {
@@ -117,6 +124,10 @@
             }, {
                 "name": "?track",
                 "value": "Description :\nTrouve l'id du compte twitch de la personne.\n\nUsage :\n- ?track nom",
+                "inline": false
+            }, {
+                "name": "?names",
+                "value": "Description :\nTrouve les anciens twitch de la personne.\n\nUsage :\n- ?names pseudo actuel",
                 "inline": false
             }, {
                 "name": "Pour plus d'aide",
