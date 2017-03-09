@@ -1,0 +1,166 @@
+"use strict";
+
+const WebSocket = require("ws"),
+    EventEmitter = require("events"),
+    URL = "wss://pubsub-edge.twitch.tv";
+
+/**
+ * A pubsub client that handles up to 50 channels.
+ */
+
+class Shard extends EventEmitter {
+
+    /**
+     * @param {ShardingManager} manager         The sharding manager that spawned the shard
+     * @param {Object}          options         An object containing the following options
+     * @param {Number}          options.id      The index of the shard for loop
+     * @param {String}          options.mod_id  The id of the user used by the pubsub system
+     * @param {String}          options.nonce   A nonce to use when connecting to the pubsub system
+     * @param {String}          options.token   Token to use while connecting to the pubsub system
+     * @param {Array}           options.topics  Topics to listen when connecting to the pubsub system
+     * @param {Boolean}         options.full    Whether the shard has 50 topics or less
+     */
+
+    constructor(manager, options) {
+        super();
+
+        this.manager = manager;
+        this.options = options;
+        this.fetchMessage = false;
+        this.lastMessage = {};
+
+        this.validTopics().then(() => {
+            this.connect();
+        });
+    }
+
+    validTopics() {
+        let promise = new Promise(resolve => {
+            for (let i = 0; i <= this.options.topics.length; i++) {
+                i == this.options.topics.length ? resolve() : this.options.topics[i] = `chat_moderator_actions.${this.options.mod_id}.${this.options.topics[i]}`;
+            }
+        });
+        return promise;
+    }
+
+
+    add(topic) {
+
+        /**
+         * @param {String} topic A twitch channel id to listen events on.
+         */
+
+        let promise = new Promise((resolve, reject) => {
+
+            if (this.options.topics.length < 50) {
+                let temporary = [...this.options.topics, `chat_moderator_actions.${this.options.mod_id}.${topic}`];
+                this.ws.send(JSON.stringify({
+                    type: "LISTEN",
+                    nonce: this.options.nonce,
+                    data: {
+                        topics: temporary,
+                        auth_token: this.options.token
+                    }
+                }));
+                this.fetchMessage = true;
+
+
+                //Wait 1.5 second before resolving the function to get the response
+                setTimeout(() => {
+                    if (this.lastMessage.error != null) {
+
+                        //If error return the error
+                        if (this.lastMessage.error != "") {
+                            reject({
+                                topic,
+                                err: this.lastMessage.error,
+                                shard: this.options
+                            });
+
+                            //Else topic has been added.
+                        } else {
+                            this.options.topics.push(topic);
+                            this.options.full = (this.options.full >= 50);
+                            resolve({
+                                topic,
+                                err: "success",
+                                shard: this.options
+                            });
+                        }
+
+                        //If lastMessage is still null after 1 second
+                    } else {
+                        reject({
+                            topic,
+                            err: "no_response",
+                            shard: this.options
+                        });
+                    }
+
+                    setTimeout(() => {
+                        this.lastMessage = {};
+                    }, 100);
+                }, 1.5 * 1000);
+
+
+                //More than 50 topics on shard.
+            } else reject({
+                topic,
+                err: "shard_full",
+                shard: this.options
+            });
+
+        });
+        return promise;
+    }
+
+
+
+    connect() {
+        this.ws = new WebSocket(URL);
+
+        this.ws.on("open", () => {
+
+            this.ws.send(JSON.stringify({
+                type: "LISTEN",
+                nonce: this.options.nonce,
+                data: {
+                    topics: this.options.topics,
+                    auth_token: this.options.token
+                }
+            }));
+
+            this.emit("ready", this.options);
+        });
+
+
+        this.ws.on("close", () => {
+            this.manager.emit("disconnect", this.options);
+        });
+
+
+        setInterval(() => {
+            this.ws.send(JSON.stringify({
+                type: "PING"
+            }));
+        }, 250 * 1000);
+
+
+        this.ws.on("message", m => {
+
+            try {
+                let message = JSON.parse(m);
+                if (message.type == "RESPONSE" && this.fetchMessage) {
+                    this.lastMessage = message;
+                    this.fetchMessage = false;
+                }
+            } catch (e) {
+                if (e.message != null) console.log(e);
+            }
+
+            this.emit("message", this.options, m);
+        });
+    }
+}
+
+module.exports = Shard;
