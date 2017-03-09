@@ -82,7 +82,7 @@
             "message": "Ce serveur n'est maintenant plus connecté à aucune chaîne twitch."
         },
         "twitchIdFound": {
-            "message": "L'id twitch du pseudonyme {0} est : `{1}`. Voici une liste des pseudos utilisés par cette personne : \n{2}"
+            "message": "L'id twitch du pseudonyme {0} est : `{1}`"
         }
     },
     "commands": {
