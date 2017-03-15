@@ -4,7 +4,8 @@ const mysql = require("mysql"),
     tmi = require("tmi.js"),
     http = require("http"),
     exec = require("child_process").exec,
-    Eris = require("eris");
+    Eris = require("eris"),
+    ShardManager = require("./pubsub/ShardManager.js");
 
 
 //----------------------------------------------------------------------------//
@@ -47,6 +48,12 @@ const Client = {
             password: require("./config.json").twitchpassword
         },
         channels: require("./config.json").twitchchannels
+    }),
+
+    pubsub: new ShardManager({
+        token: require("./config.json").pubsubToken,
+        topics: [require("./config.json").twitchID],
+        mod_id: require("./config.json").twitchID
     }),
 
     functions: require("./functions.js"),
@@ -103,6 +110,13 @@ Client.discord.on("messageCreate", m => {
     } //else Client.functions.sendEmbed("noDM", true, "en", "error", [null, null, null], Client, m);
 });
 
+//----------------------------------------------------------------------------//
+//                         When the bot is added to a channel                 //
+//----------------------------------------------------------------------------//
+
+Client.twitch.on("mods", (channel, mods) => {
+    Client.functions.setMod(Client, channel, mods);
+});
 
 //----------------------------------------------------------------------------//
 //                          Log things in the database                        //

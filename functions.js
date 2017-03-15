@@ -1,4 +1,5 @@
 module.exports = {
+    setMod: require("./functions/setMod.js"),
     checkServer: require("./functions/checkBotCollection.js"),
     serverAlert: require("./functions/serverAlert.js"),
     addLog: require("./functions/addLog.js"),

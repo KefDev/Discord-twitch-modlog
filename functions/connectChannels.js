@@ -7,11 +7,17 @@ module.exports = function(Client) {
         }).on("result", row => {
             Client.db.pause();
             Client.twitch.join(row.twitchChannel);
-            setTimeout(() => {
-                Client.db.resume();
-            }, 1);
+
+            if (row.twitchmod) {
+                Client.pubsub.addTopic(row.channelID).then(() => {
+                    Client.db.resume();
+                }).catch(() => {
+                    Client.db.resume();
+                });
+            }
+
         }).on("end", () => {
-            console.log("end");
+            console.log("Connected to every channel");
         });
 
 };
