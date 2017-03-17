@@ -38,7 +38,7 @@ const Client = {
 
     twitch: new tmi.client({
         options: {
-            debug: true
+            debug: false
         },
         connection: {
             reconnect: true
@@ -52,8 +52,8 @@ const Client = {
 
     pubsub: new ShardManager({
         token: require("./config.json").pubsubToken,
-        topics: [require("./config.json").twitchID],
-        mod_id: require("./config.json").twitchID
+        topics: ["109809601"],
+        mod_id: "109809601"
     }),
 
     functions: require("./functions.js"),
@@ -70,17 +70,17 @@ const Client = {
 
 
 Client.discord.connect().then(() => {
-    Client.twitch.connect()
-        .then(() => {
-            Client.functions.connectChannels(Client);
-        })
-        .catch(error => {
-            console.log(error);
-            process.exit(1);
-        });
+    Client.twitch.connect();
 }).catch(error => {
     console.log(error);
     process.exit(1);
+});
+
+
+Client.pubsub.on("ready", () => {
+    setTimeout(() => {
+        Client.functions.connectChannels(Client);
+    }, 20 * 1000);
 });
 
 
@@ -115,6 +115,7 @@ Client.discord.on("messageCreate", m => {
 //----------------------------------------------------------------------------//
 
 Client.twitch.on("mods", (channel, mods) => {
+    console.log(mods);
     Client.functions.setMod(Client, channel, mods);
 });
 
@@ -122,7 +123,7 @@ Client.twitch.on("mods", (channel, mods) => {
 //                          Log things in the database                        //
 //----------------------------------------------------------------------------//
 
-
+/*
 Client.twitch.on("ban", (channel, username, reason) => {
     Client.functions.addLog(channel, username, reason, null, "ban", Client);
 });
@@ -130,6 +131,19 @@ Client.twitch.on("ban", (channel, username, reason) => {
 
 Client.twitch.on("timeout", (channel, username, reason, duration) => {
     Client.functions.addLog(channel, username, reason, duration, "timeout", Client);
+});
+
+*/
+Client.pubsub.on("ban", (shard, ban) => {
+    Client.functions.addLog(Client, ban);
+});
+
+Client.pubsub.on("unban", (shard, unban) => {
+    Client.functions.addLog(Client, unban);
+});
+
+Client.pubsub.on("timeout", (shard, timeout) => {
+    Client.functions.addLog(Client, timeout);
 });
 
 
@@ -195,6 +209,15 @@ Client.discord.on("warn", e => {
 });
 
 
+Client.pubsub.on("debug", (e, opt) => {
+    console.log(e, opt);
+});
+
+
+Client.pubsub.on("shard-ready", shard => {
+    console.log(`Shard ${shard.id} is ready`);
+});
+
 //Force-disconnects everything.
 
 
@@ -213,11 +236,11 @@ process.on("SIGINT", () => {
 
 let server = http.createServer((req) => {
     if (req.method == "POST") {
-        exec("git pull", function(error, stdout, stderr) {
+        exec("git pull git@github.com:Equinoxbig/Discord-twitch-modlog.git total-rewrite", function(error, stdout, stderr) {
             console.log("stdout : " + stdout + "\nstderr :" + stderr);
             if (error !== null) console.log("exec error: " + error);
         });
     }
 });
 
-server.listen(1337);
+server.listen(1338);

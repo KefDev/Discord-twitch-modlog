@@ -18,6 +18,7 @@ class ShardingManager extends EventEmitter {
     constructor(options) {
         super();
 
+        this.started = false;
         this.options = options;
         this.lastShard = -1;
         this.spawn();
@@ -53,6 +54,7 @@ class ShardingManager extends EventEmitter {
             options = {
                 id,
                 topics,
+                mod_id: this.options.mod_id,
                 token: this.options.token,
                 nonce: nonce,
                 full: topics.length >= 50
@@ -62,12 +64,15 @@ class ShardingManager extends EventEmitter {
         shards.set(id, shard);
 
         shard.on("ready", shard => {
-            if (!shard.full) this.emit("ready");
+            if (!shard.full && !this.started) {
+                this.started = true;
+                this.emit("ready");
+            }
             this.emit("shard-ready", shard);
         });
 
         shard.on("message", (shard, message) => {
-
+            this.emit("debug", message, shard);
             try {
                 message = JSON.parse(message);
 
@@ -76,7 +81,6 @@ class ShardingManager extends EventEmitter {
                 } else if (message.type == "PONG") {
                     this.emit("pong", shard);
                 } else {
-                    //this.emit("debug", message);
 
                     if (message.data != null) {
 

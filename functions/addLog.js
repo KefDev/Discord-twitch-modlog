@@ -1,8 +1,8 @@
 const moment = require("moment");
 
-module.exports = function(channel, username, reason, duration, type, Client) {
+module.exports = (Client, action) => {
 
-    Client.db.query("SELECT * FROM global WHERE twitchChannel = ?", [channel], (error, results) => {
+    Client.db.query("SELECT * FROM global WHERE channelID = ?", [action.channel_id], (error, results) => {
         if (error) console.log(error);
         else if (results[0] == null) return;
         else {
@@ -14,70 +14,64 @@ module.exports = function(channel, username, reason, duration, type, Client) {
                 if (error) console.log(error);
                 else {
                     var caseID;
-                    results[0] != null ? caseID = results[0].caseID + 1 : caseID = 1;
+                    results[0] != null ? caseID = results[0].caseID + 1 : caseID = 0;
 
-                    if (duration == null) duration = Client.lang[server.language].words.permanent;
-                    if (reason == null) reason = Client.lang[server.language].sentences.enter_reason + "`" + server.prefix + "reason " + caseID + " " + Client.lang[server.language].words.reason.toLowerCase() + "`";
+                    if (action.duration == "permanent") action.duration = Client.lang[server.language].words.permanent;
+                    if (action.reason == null) action.reason = Client.lang[server.language].sentences.enter_reason + "`" + server.prefix + "reason " + caseID + " " + Client.lang[server.language].words.reason.toLowerCase() + "`";
                     let mod = Client.lang[server.language].words.unknown,
                         date = moment().format("LLLL"),
-                        beautifytype = type[0].toUpperCase() + type.substring(1, type.length);
+                        beautifytype = action.type[0].toUpperCase() + action.type.substring(1, action.type.length);
 
-                    Client.functions.trackUser(Client, username)
-                        .then(data => {
-                            username = username + " (" + data.users[0]._id + ")";
-                            if (server[type + "Channel"] != ".") {
-                                Client.db.query("SELECT COUNT(*) AS numberActions FROM `" + server.discordID + "` WHERE twitchid = ?", [data.users[0]._id], (error, results) => {
-                                    let actions = results[0].numberActions || 1;
-                                    Client.discord.createMessage(server[type + "Channel"], {
-                                        content: "\n",
-                                        embed: {
-                                            color: Client.config.colors[type],
-                                            timestamp: new Date(),
 
-                                            fields: [{
-                                                "name": "ID :",
-                                                "value": caseID,
-                                                "inline": true
-                                            }, {
-                                                "name": Client.lang[server.language].words.type + " :",
-                                                "value": beautifytype,
-                                                "inline": true
-                                            }, {
-                                                "name": Client.lang[server.language].words.user + " :",
-                                                "value": username,
-                                                "inline": false
-                                            }, {
-                                                "name": Client.lang[server.language].sentences.actions + " :",
-                                                "value": actions,
-                                                "inline": true
-                                            }, {
-                                                "name": Client.lang[server.language].words.moderator + " :",
-                                                "value": mod,
-                                                "inline": false
-                                            }, {
-                                                "name": Client.lang[server.language].words.reason + " :",
-                                                "value": reason,
-                                                "inline": false
-                                            }, {
-                                                "name": Client.lang[server.language].words.duration + " :",
-                                                "value": duration,
-                                                "inline": true
-                                            }, {
-                                                "name": Client.lang[server.language].words.date + " :",
-                                                "value": date,
-                                                "inline": true
-                                            }]
-                                        }
-                                    }).then(message => {
-                                        Client.db.query("INSERT INTO `" + server.discordID + "` SET msgID = ?, twitchname = ?, twitchid = ?, modID = ?, reason = ?, type = ?, duration = ?, date = ?", [message.id, username, data.users[0]._id, mod, reason, type, duration, date]); //ID auto-increments itself
-                                    });
-                                });
-                            }
-                        })
-                        .catch(error => {
-                            username = username + " (" + Client.lang[server.language].errors.twitchIdNotFound.message + ")";
-                            console.log(error.error + "\n" + error.message + "\n" + username);
+                    if (server[action.type + "Channel"] != ".") {
+                        Client.db.query("SELECT COUNT(*) AS numberActions FROM `" + server.discordID + "` WHERE twitchid = ?", [action.target.id], (error, results) => {
+                            let actions = results[0].numberActions || 1;
+                            Client.discord.createMessage(server[action.type + "Channel"], {
+                                content: "\n",
+                                embed: {
+                                    color: Client.config.colors[action.type],
+                                    timestamp: new Date(),
+
+                                    fields: [{
+                                        "name": "ID :",
+                                        "value": caseID,
+                                        "inline": true
+                                    }, {
+                                        "name": Client.lang[server.language].words.type + " :",
+                                        "value": beautifytype,
+                                        "inline": true
+                                    }, {
+                                        "name": Client.lang[server.language].words.user + " :",
+                                        "value": action.target.name + " (" + action.target.id + ")",
+                                        "inline": false
+                                    }, {
+                                        "name": Client.lang[server.language].sentences.actions + " :",
+                                        "value": actions,
+                                        "inline": true
+                                    }, {
+                                        "name": Client.lang[server.language].words.moderator + " :",
+                                        "value": action.author.name + " (" + action.author.id + ")",
+                                        "inline": false
+                                    }, {
+                                        "name": Client.lang[server.language].words.reason + " :",
+                                        "value": action.reason,
+                                        "inline": false
+                                    }, {
+                                        "name": Client.lang[server.language].words.duration + " :",
+                                        "value": action.duration,
+                                        "inline": true
+                                    }, {
+                                        "name": Client.lang[server.language].words.date + " :",
+                                        "value": date,
+                                        "inline": true
+                                    }]
+                                }
+                            }).then(message => {
+                                Client.db.query("INSERT INTO `" + server.discordID + "` SET msgID = ?, twitchname = ?, twitchid = ?, modID = ?, reason = ?, type = ?, duration = ?, date = ?", [message.id, username, data.users[0]._id, mod, reason, type, duration, date]); //ID auto-increments itself
+                            });
                         });
+                    }
+
                 }
             });
         }

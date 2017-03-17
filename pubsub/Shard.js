@@ -27,6 +27,8 @@ class Shard extends EventEmitter {
         this.manager = manager;
         this.options = options;
         this.fetchMessage = false;
+        this.tries = 0;
+        this.lastTry = Date.now();
         this.lastMessage = {};
 
         this.validTopics().then(() => {
@@ -53,55 +55,62 @@ class Shard extends EventEmitter {
         let promise = new Promise((resolve, reject) => {
 
             if (this.options.topics.length < 50) {
-                let temporary = [...this.options.topics, `chat_moderator_actions.${this.options.mod_id}.${topic}`];
-                this.ws.send(JSON.stringify({
-                    type: "LISTEN",
-                    nonce: this.options.nonce,
-                    data: {
-                        topics: temporary,
-                        auth_token: this.options.token
-                    }
-                }));
-                this.fetchMessage = true;
+                if (this.options.topics.includes(`chat_moderator_actions.${this.options.mod_id}.${topic}`)) {
+                    resolve({
+                        topic,
+                        err: "success",
+                        shard: this.options
+                    });
+                } else {
+                    let temporary = [...this.options.topics, `chat_moderator_actions.${this.options.mod_id}.${topic}`];
+                    this.ws.send(JSON.stringify({
+                        type: "LISTEN",
+                        nonce: this.options.nonce,
+                        data: {
+                            topics: temporary,
+                            auth_token: this.options.token
+                        }
+                    }));
+                    this.fetchMessage = true;
 
 
-                //Wait 1.5 second before resolving the function to get the response
-                setTimeout(() => {
-                    if (this.lastMessage.error != null) {
+                    //Wait 1.5 second before resolving the function to get the response
+                    setTimeout(() => {
+                        if (this.lastMessage.error != null) {
 
-                        //If error return the error
-                        if (this.lastMessage.error != "") {
+                            //If error return the error
+                            if (this.lastMessage.error != "") {
+                                reject({
+                                    topic,
+                                    err: this.lastMessage.error,
+                                    shard: this.options
+                                });
+
+                                //Else topic has been added.
+                            } else {
+                                this.options.topics.push(`chat_moderator_actions.${this.options.mod_id}.${topic}`);
+                                this.options.full = (this.options.full >= 50);
+                                resolve({
+                                    topic,
+                                    err: "success",
+                                    shard: this.options
+                                });
+                            }
+
+                            //If lastMessage is still null after 1 second
+                        } else {
                             reject({
                                 topic,
-                                err: this.lastMessage.error,
-                                shard: this.options
-                            });
-
-                            //Else topic has been added.
-                        } else {
-                            this.options.topics.push(topic);
-                            this.options.full = (this.options.full >= 50);
-                            resolve({
-                                topic,
-                                err: "success",
+                                err: "no_response",
                                 shard: this.options
                             });
                         }
 
-                        //If lastMessage is still null after 1 second
-                    } else {
-                        reject({
-                            topic,
-                            err: "no_response",
-                            shard: this.options
-                        });
-                    }
-
-                    setTimeout(() => {
-                        this.lastMessage = {};
-                    }, 100);
-                }, 1.5 * 1000);
-
+                        setTimeout(() => {
+                            this.lastMessage = {};
+                        }, 100);
+                    }, 1.5 * 1000);
+                }
 
                 //More than 50 topics on shard.
             } else reject({
@@ -135,7 +144,17 @@ class Shard extends EventEmitter {
 
 
         this.ws.on("close", () => {
-            this.manager.emit("disconnect", this.options);
+            if (Date.now() - this.lastTry < 60000) {
+                this.tries += 1;
+                this.lastTry = Date.now();
+            } else this.tries = 0;
+            setTimeout(() => {
+                if (this.tries < 4) this.connect();
+                else {
+                    throw new Error("Shard can't reconnect");
+                    process.exit(1);
+                }
+            }, 5000);
         });
 
 

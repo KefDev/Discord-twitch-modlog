@@ -14,6 +14,8 @@ module.exports = function(Client) {
                 }).catch(() => {
                     Client.db.resume();
                 });
+            } else {
+                Client.db.resume();
             }
 
         }).on("end", () => {
