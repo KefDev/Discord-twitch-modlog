@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
-const WebSocket = require("ws"),
-    EventEmitter = require("events"),
-    URL = "wss://pubsub-edge.twitch.tv";
+const WebSocket = require('ws'),
+    EventEmitter = require('events'),
+    URL = 'wss://pubsub-edge.twitch.tv';
 
 /**
  * A pubsub client that handles up to 50 channels.
@@ -58,13 +58,13 @@ class Shard extends EventEmitter {
                 if (this.options.topics.includes(`chat_moderator_actions.${this.options.mod_id}.${topic}`)) {
                     resolve({
                         topic,
-                        err: "success",
+                        err: 'success',
                         shard: this.options
                     });
                 } else {
                     let temporary = [...this.options.topics, `chat_moderator_actions.${this.options.mod_id}.${topic}`];
                     this.ws.send(JSON.stringify({
-                        type: "LISTEN",
+                        type: 'LISTEN',
                         nonce: this.options.nonce,
                         data: {
                             topics: temporary,
@@ -79,7 +79,7 @@ class Shard extends EventEmitter {
                         if (this.lastMessage.error != null) {
 
                             //If error return the error
-                            if (this.lastMessage.error != "") {
+                            if (this.lastMessage.error != '') {
                                 reject({
                                     topic,
                                     err: this.lastMessage.error,
@@ -92,7 +92,7 @@ class Shard extends EventEmitter {
                                 this.options.full = (this.options.full >= 50);
                                 resolve({
                                     topic,
-                                    err: "success",
+                                    err: 'success',
                                     shard: this.options
                                 });
                             }
@@ -101,7 +101,7 @@ class Shard extends EventEmitter {
                         } else {
                             reject({
                                 topic,
-                                err: "no_response",
+                                err: 'no_response',
                                 shard: this.options
                             });
                         }
@@ -115,7 +115,7 @@ class Shard extends EventEmitter {
                 //More than 50 topics on shard.
             } else reject({
                 topic,
-                err: "shard_full",
+                err: 'shard_full',
                 shard: this.options
             });
 
@@ -128,10 +128,10 @@ class Shard extends EventEmitter {
     connect() {
         this.ws = new WebSocket(URL);
 
-        this.ws.on("open", () => {
+        this.ws.on('open', () => {
 
             this.ws.send(JSON.stringify({
-                type: "LISTEN",
+                type: 'LISTEN',
                 nonce: this.options.nonce,
                 data: {
                     topics: this.options.topics,
@@ -139,11 +139,11 @@ class Shard extends EventEmitter {
                 }
             }));
 
-            this.emit("ready", this.options);
+            this.emit('ready', this.options);
         });
 
 
-        this.ws.on("close", () => {
+        this.ws.on('close', () => {
             if (Date.now() - this.lastTry < 60000) {
                 this.tries += 1;
                 this.lastTry = Date.now();
@@ -151,7 +151,7 @@ class Shard extends EventEmitter {
             setTimeout(() => {
                 if (this.tries < 4) this.connect();
                 else {
-                    throw new Error("Shard can't reconnect");
+                    console.log(new Error(`Shard can't reconnect`));
                     process.exit(1);
                 }
             }, 5000);
@@ -160,16 +160,16 @@ class Shard extends EventEmitter {
 
         setInterval(() => {
             this.ws.send(JSON.stringify({
-                type: "PING"
+                type: 'PING'
             }));
         }, 250 * 1000);
 
 
-        this.ws.on("message", m => {
+        this.ws.on('message', m => {
 
             try {
                 let message = JSON.parse(m);
-                if (message.type == "RESPONSE" && this.fetchMessage) {
+                if (message.type == 'RESPONSE' && this.fetchMessage) {
                     this.lastMessage = message;
                     this.fetchMessage = false;
                 }
@@ -177,7 +177,7 @@ class Shard extends EventEmitter {
                 if (e.message != null) console.log(e);
             }
 
-            this.emit("message", this.options, m);
+            this.emit('message', this.options, m);
         });
     }
 }

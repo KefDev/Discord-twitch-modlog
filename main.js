@@ -1,10 +1,11 @@
-"use strict";
+'use strict';
 
-const mysql = require("mysql"),
-    tmi = require("tmi.js"),
-    http = require("http"),
-    exec = require("child_process").exec,
-    ShardManager = require("./pubsub/ShardManager.js");
+const mysql = require('mysql'),
+    tmi = require('tmi.js'),
+    exec = require('child_process').exec,
+    app = require('express')(),
+    helmet = require('helmet'),
+    ShardManager = require('./pubsub/ShardManager.js');
 
 
 //----------------------------------------------------------------------------//
@@ -13,15 +14,14 @@ const mysql = require("mysql"),
 
 
 const Client = {
-    config: require("./config.json"),
+    config: require('./config2.json'),
     channels: [],
-    ignoredGuilds: require("./config.json").ignoredGuilds,
 
     db: mysql.createConnection({
-        host: require("./config.json").mysqlhost,
-        user: require("./config.json").mysqluser,
-        password: require("./config.json").mysqlpw,
-        database: require("./config.json").mysqldb
+        host: require('./config2.json').mysqlhost,
+        user: require('./config2.json').mysqluser,
+        password: require('./config2.json').mysqlpw,
+        database: require('./config2.json').mysqldb
     }),
 
     twitch: new tmi.client({
@@ -32,22 +32,22 @@ const Client = {
             reconnect: true
         },
         identity: {
-            username: require("./config.json").twitchusername,
-            password: require("./config.json").twitchpassword
+            username: require('./config2.json').twitchusername,
+            password: require('./config2.json').twitchpassword
         },
-        channels: require("./config.json").twitchchannels
+        channels: require('./config2.json').twitchchannels
     }),
 
     pubsub: new ShardManager({
-        token: require("./config.json").pubsubToken,
-        topics: ["109809601"],
-        mod_id: "109809601"
+        token: require('./config2.json').pubsubToken,
+        topics: ['109809601'],
+        mod_id: '109809601'
     }),
 
-    functions: require("./functions.js"),
+    functions: require('./functions.js'),
 
-    request: require("request"),
-    fs: require("fs")
+    request: require('request'),
+    fs: require('fs')
 };
 
 
@@ -58,7 +58,7 @@ const Client = {
 
 Client.twitch.connect();
 
-Client.pubsub.on("ready", () => {
+Client.pubsub.on('ready', () => {
     setTimeout(() => {
         Client.functions.connectChannels(Client);
     }, 20 * 1000);
@@ -69,9 +69,8 @@ Client.pubsub.on("ready", () => {
 //                         When the bot is added to a channel                 //
 //----------------------------------------------------------------------------//
 
-Client.twitch.on("mods", (channel, mods) => {
-    console.log(mods);
-    Client.functions.setMod(Client, channel, mods);
+Client.twitch.on('mods', (channel, mods) => {
+    Client.functions.addChannel(Client, channel, mods);
 });
 
 //----------------------------------------------------------------------------//
@@ -79,15 +78,15 @@ Client.twitch.on("mods", (channel, mods) => {
 //----------------------------------------------------------------------------//
 
 
-Client.pubsub.on("ban", (shard, ban) => {
+Client.pubsub.on('ban', (shard, ban) => {
     Client.functions.addLog(Client, ban);
 });
 
-Client.pubsub.on("unban", (shard, unban) => {
+Client.pubsub.on('unban', (shard, unban) => {
     Client.functions.addLog(Client, unban);
 });
 
-Client.pubsub.on("timeout", (shard, timeout) => {
+Client.pubsub.on('timeout', (shard, timeout) => {
     Client.functions.addLog(Client, timeout);
 });
 
@@ -97,24 +96,24 @@ Client.pubsub.on("timeout", (shard, timeout) => {
 //----------------------------------------------------------------------------//
 
 
-Client.twitch.on("disconnected", reason => {
+Client.twitch.on('disconnected', reason => {
     console.log(reason);
     process.exit(1);
 });
 
 
-Client.pubsub.on("debug", (e, opt) => {
+Client.pubsub.on('debug', (e, opt) => {
     console.log(e, opt);
 });
 
 
-Client.pubsub.on("shard-ready", shard => {
+Client.pubsub.on('shard-ready', shard => {
     console.log(`Shard ${shard.id} is ready`);
 });
 
 //Force-disconnects everything.
 
-process.on("SIGINT", () => {
+process.on('SIGINT', () => {
     Client.twitch.disconnect();
     setTimeout(() => {
         process.exit(1);
@@ -123,16 +122,36 @@ process.on("SIGINT", () => {
 
 
 //----------------------------------------------------------------------------//
-//                                 AUTO-GITPULL                               //
+//                                 COMMUNICATING                              //
 //----------------------------------------------------------------------------//
 
-let server = http.createServer((req) => {
-    if (req.method == "POST") {
-        exec("git pull git@github.com:Equinoxbig/Discord-twitch-modlog.git total-rewrite", function(error, stdout, stderr) {
-            console.log("stdout : " + stdout + "\nstderr :" + stderr);
-            if (error !== null) console.log("exec error: " + error);
-        });
-    }
+app.use(helmet());
+app.disable('x-powered-by');
+app.listen(1338, 'localhost');
+
+app.post('/add', (req, res) => {
+    Client.twitch.mods(req.body.channel);
+    res.status(200).json({
+        result: 'OK',
+        code: 200,
+        message: 'Request received. Currently checking the channel. Come back in a few seconds.'
+    });
+    Client.db.query('UPDATE global SET modo = 0 WHERE LOWER(name) = ?', [req.body.channel]);
 });
 
-server.listen(1338);
+app.post('/gitpush', () => {
+    exec('git pull', (error, stdout, stderr) => {
+        console.log('stdout : ', stdout, '\nstderr :', stderr);
+        if (error !== null) console.log('exec error: ', error);
+    });
+});
+
+app.post('/remove', (req, res) => {
+    Client.db.query('UPDATE global SET modo = -1 WHERE LOWER(name) = ?', [req.body.channel]);
+    Client.twitch.part(req.body.channel);
+    res.status(200).json({
+        result: 'OK',
+        code: '200',
+        message: 'Your channel has been removed from the channels to watch. Moderation actions will no long be logged.'
+    });
+});

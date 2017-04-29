@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
-const Shard = require("./Shard.js"),
-    EventEmitter = require("events"),
-    shortid = require("shortid");
+const Shard = require('./Shard.js'),
+    EventEmitter = require('events'),
+    shortid = require('shortid');
 
 let shards = new Map();
 
@@ -63,32 +63,32 @@ class ShardingManager extends EventEmitter {
             shard = new Shard(this, options);
         shards.set(id, shard);
 
-        shard.on("ready", shard => {
+        shard.on('ready', shard => {
             if (!shard.full && !this.started) {
                 this.started = true;
-                this.emit("ready");
+                this.emit('ready');
             }
-            this.emit("shard-ready", shard);
+            this.emit('shard-ready', shard);
         });
 
-        shard.on("message", (shard, message) => {
-            this.emit("debug", message, shard);
+        shard.on('message', (shard, message) => {
+            this.emit('debug', message, shard);
             try {
                 message = JSON.parse(message);
 
-                if (message.type == "RESPONSE" && message.error != "") {
-                    this.emit("error", shard, message);
-                } else if (message.type == "PONG") {
-                    this.emit("pong", shard);
+                if (message.type == 'RESPONSE' && message.error != '') {
+                    this.emit('error', shard, message);
+                } else if (message.type == 'PONG') {
+                    this.emit('pong', shard);
                 } else {
 
                     if (message.data != null) {
 
-                        if (message.data.topic.startsWith("chat_moderator_actions")) {
+                        if (message.data.topic.startsWith('chat_moderator_actions')) {
                             let m = JSON.parse(message.data.message),
                                 data = m.data;
                             let obj = {
-                                channel_id: message.data.topic.split(".")[2],
+                                channel_id: message.data.topic.split('.')[2],
                                 type: data.moderation_action,
                                 author: {
                                     id: data.created_by_user_id,
@@ -98,26 +98,27 @@ class ShardingManager extends EventEmitter {
                                     id: data.target_user_id,
                                     name: data.args[0]
                                 },
-                                reason: "",
-                                duration: ""
+                                reason: '',
+                                duration: '',
+                                created_at: new Date().getTime()
                             };
 
-                            if (data.moderation_action == "ban" || data.moderation_action == "unban") {
+                            if (data.moderation_action == 'ban' || data.moderation_action == 'unban') {
                                 obj.reason = data.args[1];
-                                obj.duration = "permanent";
+                                obj.duration = 'permanent';
                                 this.emit(data.moderation_action, shard, obj);
                             } else {
                                 obj.reason = data.args[2];
                                 obj.duration = data.args[1];
-                                this.emit("timeout", shard, obj);
+                                this.emit('timeout', shard, obj);
                             }
 
-                        } else this.emit("message", shard, message);
+                        } else this.emit('message', shard, message);
                     }
                 }
 
             } catch (e) {
-                this.emit("debug", e, this.options); //Response is an invalid JSON.
+                this.emit('debug', e, this.options); //Response is an invalid JSON.
             }
         });
     }
@@ -136,7 +137,7 @@ class ShardingManager extends EventEmitter {
                 resolve(response);
                 shards.set(response.shard.id, response.shard);
             }).catch(response => {
-                if (response.err == "shard_full") this.connect(topic);
+                if (response.err == 'shard_full') this.connect(topic);
                 else reject(response);
             });
 
